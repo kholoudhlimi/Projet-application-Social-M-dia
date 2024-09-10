@@ -23,34 +23,41 @@ exports.signup = (req, res, next) => {
         })
         .catch(error => res.status(500).json({ error })); // Envoi d'une erreur si le hachage échoue
 };
-
 // Fonction pour la connexion d'un utilisateur
-exports.login = (req, res, next) => {
-    // Recherche de l'utilisateur dans la base de données via son email
-    User.findOne({ email: req.body.email })
-        .then(user => {
-            // Si l'utilisateur n'est pas trouvé, retourner une erreur 401 (non autorisé)
-            if (!user) {
-                return res.status(401).json({ error: 'Utilisateur non trouvé !' });
-            }
-            // Comparaison du mot de passe envoyé avec celui stocké dans la base de données
-            bcrypt.compare(req.body.password, user.password)
-                .then(valid => {
-                    // Si le mot de passe est incorrect, retourner une erreur 401
-                    if (!valid) {
-                        return res.status(401).json({ error: 'Mot de passe incorrect !' });
-                    }
-                    // Si le mot de passe est correct, générer un token JWT avec l'ID utilisateur
-                    res.status(200).json({
-                        userId: user._id, // L'ID de l'utilisateur est inclus dans la réponse
-                        token: jwt.sign(
-                            { userId: user._id },  // Payload du token : ID utilisateur
-                            'RANDOM_TOKEN_SECRET', // Clé secrète pour signer le token
-                            { expiresIn: '24h' }   // Expiration du token après 24 heures
-                        )
-                    });
-                })
-                .catch(error => res.status(500).json({ error })); // Envoi d'une erreur si la comparaison échoue
-        })
-        .catch(error => res.status(500).json({ error })); // Envoi d'une erreur si la recherche de l'utilisateur échoue
+exports.login = async (req, res, next) => {
+    const { email, password } = req.body;
+
+    try {
+        // Recherche de l'utilisateur dans la base de données via son email
+        const user = await User.findOne({ email: email });
+
+        // Si l'utilisateur n'est pas trouvé, retourner une erreur 401 (non autorisé)
+        if (!user) {
+            return res.status(401).json({ error: 'Utilisateur non trouvé !' });
+        }
+
+        // Comparaison du mot de passe envoyé avec celui stocké dans la base de données
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Mot de passe incorrect !' });
+        }
+
+        // Création d'un token JWT
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.CLE,
+            { expiresIn: '2122222h' }
+        );
+
+        // Envoi d'une réponse de succès avec le token et les informations de l'utilisateur
+        return res.status(200).json({
+            message: 'Connexion réussie !',
+            token: token,
+            user: user
+        });
+    } catch (error) {
+        // Envoi d'une erreur en cas de problème
+        return res.status(500).json({ error: 'Erreur serveur !' });
+    }
 };
