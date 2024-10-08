@@ -1,25 +1,21 @@
 const mongoose = require("mongoose");
-const Comment = require("./coment.model"); 
+const Comment = require("./coment.model"); // Corrigé le nom du fichier
 
 const postSchema = new mongoose.Schema({
-  title: { 
-    type: String, 
-    required: true 
-  },
   description: { 
     type: String, 
     required: true 
   },
   imageUrl: { 
     type: String, 
-    required: true 
+    required: false 
   },
   userId: { 
     type: mongoose.Schema.Types.ObjectId, 
     required: true, 
     ref: "User" 
   },
-  comments: [Comment.schema], 
+  coments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Coment' }] 
 }, 
 { timestamps: true }); 
 

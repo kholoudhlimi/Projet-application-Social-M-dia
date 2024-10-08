@@ -3,7 +3,7 @@ const User = require('../models/user.model');
 module.exports = async (req, res, next) => {
   try {
     const user = await User.findById(req.auth.userId);
-    if (!user || !user.isAdmin) {
+    if (!user || user.role !== 'admin') {
       return res.status(403).json({ message: 'Accès refusé' });
     }
     next();
@@ -11,3 +11,6 @@ module.exports = async (req, res, next) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+

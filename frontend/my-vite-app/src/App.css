@@ -98,3 +98,6 @@ from-group label {
   width: 50%;
   text-align: center;
 }
+.layout-app{
+  display: flex;
+}

@@ -3,7 +3,6 @@ const app = express();
 const postRoutes = require('./routes/post.route');
 const comentRoutes = require('./routes/coment.route');
 const userRoutes = require('./routes/user.route');
-const adminRoutes = require('./routes/admin.route');
 const mongoose = require('mongoose');
 require('dotenv').config({ path: './config/.env' });
 
@@ -21,16 +20,15 @@ app.use(cors({
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));
 const path = require('path');
-app.use('/images', express.static(path.join(__dirname, 'images')));
-// Middleware pour le parsing JSON
+app.use('/uploads/profile', express.static(path.join(__dirname, 'uploads/profile')));
+app.use('/uploads/post', express.static(path.join(__dirname, 'uploads/post')));
+
 app.use(express.json());
 
 // Routes
-
 app.use('/api/auth', userRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/post',postRoutes);
-app.use('/api/coment',comentRoutes);
+app.use('/api/posts',postRoutes);
+app.use('/api/coments',comentRoutes);
 // Gestion des erreurs 404
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Ressource non trouvée' });

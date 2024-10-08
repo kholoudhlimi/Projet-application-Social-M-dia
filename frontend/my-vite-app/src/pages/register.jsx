@@ -3,95 +3,88 @@ import React, { useState } from "react";
 import userService from "../services/userService";
 
 const Register = () => {
-    const [pseudo, setPseudo] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [picture, setPicture] = useState(null);
     const [errors, setErrors] = useState({
-        pseudo: '',
+        username: '',
         email: '',
-        password: ''
+        password: '',
     });
 
     const formValidation = () => {
-        let status = true ;
-        const localErrors = {...errors} //= en bas
-            // pseudo: '',
-            // email: '',
-            // password: ''
-        // };
+        let status = true;
+        const localErrors = { username: '', email: '', password: '' };
 
-        if (pseudo === '') {
-            localErrors.pseudo = "pseudo required";
+        if (username === '') {
+            localErrors.username = "Username required";
             status = false;
         }
         if (email === '') {
-            localErrors.email = "email required";
+            localErrors.email = "Email required";
             status = false;
         }
         if (password === '' || password.length < 8) {
-            localErrors.password = "password required and min 8 caracteres";
+            localErrors.password = "Password required and min 8 characters";
             status = false;
         }
 
-
         setErrors(localErrors);
-        // console.log(localErrors);
         return status;
     };
 
     const register = async (e) => {
         e.preventDefault();
-        console.log("form submitted");
-        console.log("form data", pseudo, email, password);
 
         if (formValidation()) {
-            const data = {
-                pseudo: pseudo,
-                email: email,
-                password: password
-            };
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('email', email);
+            formData.append('password', password);
+
+            if (picture) {
+                formData.append('picture', picture);
+            }
 
             try {
-                const response = await userService.register(data);
+                const response = await userService.register(formData);
                 console.log("response ===>", response);
                 toast.success("Utilisateur créé!");
-                setPseudo('');
+                setUsername('');
                 setEmail('');
                 setPassword('');
+                setPicture(null);
             } catch (err) {
                 console.log(err);
                 toast.error("Utilisateur non créé!");
             }
         } else {
-            console.log("form invalid");
+            console.log("Form invalid");
         }
     };
 
     return (
         <div className="register">
             <Toaster />
-            <div className="register-cover">
-                
-            </div>
             <div className="register-content">
                 <div>
-                    <h1> CHAT SPACE </h1>
-                    <p>social media application</p>
+                    <h1>Social Working CLUB</h1>
+                    <p>Social media application</p>
                 </div>
                 <div>
                     <form onSubmit={register}>
                         <div className="form-group">
-                            <label>Pseudo</label>
+                            <label>Username</label>
                             <input
                                 className="input"
                                 type="text"
-                                value={pseudo}
-                                onChange={(e) => setPseudo(e.target.value)}
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
                             />
-                            {errors.pseudo !== " " ?
-                            <p style={{textAlign:'left',color:'orangered'}} >
-                                {errors.pseudo}
-                                </p> : ''}
+                            {errors.username && (
+                                <p style={{textAlign:'left',color:'orangered'}}>{errors.username}</p>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -102,10 +95,9 @@ const Register = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
-                              {errors.email !== " " ?
-                            <p style={{textAlign:'left',color:'orangered'}} >
-                                {errors.email}
-                                </p> : ''}
+                            {errors.email && (
+                                <p style={{textAlign:'left',color:'orangered'}}>{errors.email}</p>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -116,10 +108,18 @@ const Register = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
-                             {errors.password !== " " ?
-                            <p style={{textAlign:'left',color:'orangered'}} >
-                                {errors.password}
-                                </p> : ''}
+                            {errors.password && (
+                                <p style={{textAlign:'left',color:'orangered'}}>{errors.password}</p>
+                            )}
+                        </div>
+
+                        <div className="form-group">
+                            <label>Picture</label>
+                            <input
+                                className="input"
+                                type="file"
+                                onChange={(e) => setPicture(e.target.files[0])}
+                            />
                         </div>
 
                         <button className="btn signup" type="submit">Sign up</button>

@@ -1,52 +1,132 @@
-
 const request = require('supertest');
-const app = require('../app'); 
+const app = require('../app'); // Assurez-vous d'importer l'application Express
 const mongoose = require('mongoose');
 const User = require('../models/user.model');
 
-// Mock du module bcrypt
-jest.mock('bcrypt', () => ({
-    hash: jest.fn(() => Promise.resolve('hashedpassword')),
-    compare: jest.fn(() => Promise.resolve(true))
-}));
-// Mock du module jsonwebtoken
-jest.mock('jsonwebtoken', () => ({
-    sign: jest.fn(() => 'fakeToken')
-}));
+describe('Auth Routes', () => {
+  // Nettoyage de la base de données avant chaque test
+  beforeEach(async () => {
+    await User.deleteMany();
+  });
 
-describe('User Authentication API', () => {
+  // Fermer la connexion à la base de données après tous les tests
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
 
-    // Avant chaque test, on peut s'assurer que la base de données est vide ou se préparer à la tester
-    beforeAll(async () => {
-        await mongoose.connect(process.env.MONGO_LAB, { useNewUrlParser: true, useUnifiedTopology: true });
-    });
+  // Test de la route signup pour créer un nouvel utilisateur avec une image
+  it('should create a new user with an image', async () => {
+    const filePath = `${__dirname}/../uploads/profile/test.png`; // Assurez-vous que le chemin est correct et que l'image existe
 
-    afterAll(async () => {
-        await mongoose.connection.close();
-    });
+    const res = await request(app)
+      .post('/api/auth/signup')
+      .field('username', 'testuser')
+      .field('email', 'test@example.com')
+      .field('password', 'testpassword')
+      .attach('picture', filePath); // Envoie de l'image
 
-    afterEach(async () => {
-        // Supprimer les utilisateurs après chaque test pour éviter les conflits
-        await User.deleteMany({});
-    });
+    expect(res.statusCode).toBe(201); // Vérifie que le statut est 201
+    expect(res.body).toHaveProperty('message', 'Utilisateur créé !'); // Vérifie que le message est correct
 
-    // Test d'inscription d'un utilisateur
-    it('should signup a new user', async () => {
-        const res = await request(app)
-            .post('/api/auth/signup') // Assurez-vous que l'URL correspond à votre route
-            .send({
-                pseudo: 'TestUser',
-                email: 'testuser@example.com',
-                password: 'password123'
-            });
+    const user = await User.findOne({ email: 'test@example.com' }); // Recherche l'utilisateur dans la base de données
+    expect(user).toBeTruthy(); // Vérifie que l'utilisateur a bien été créé
+    expect(user.username).toBe('testuser'); // Vérifie que le nom d'utilisateur est correct
+  });
 
-        expect(res.statusCode).toEqual(201);
-        expect(res.body.message).toEqual('Utilisateur créé !');
-        
-        // Vérification dans la base de données que l'utilisateur a bien été créé
-        const user = await User.findOne({ email: 'testuser@example.com' });
-        expect(user).not.toBeNull();
-        expect(user.pseudo).toEqual('TestUser');
-    });
+  // Test de la route signup pour vérifier l'erreur si aucune image n'est téléchargée
+  it('should return error if no image is uploaded', async () => {
+    const res = await request(app)
+      .post('/api/auth/signup')
+      .field('username', 'testuser')
+      .field('email', 'test@example.com')
+      .field('password', 'testpassword');
 
-  })
+    expect(res.statusCode).toBe(400); // Vérifie que le statut est 400
+    expect(res.body).toHaveProperty('error', 'Aucune image téléchargée.'); // Vérifie que le message d'erreur est correct
+  });
+
+  // Test de la route login pour un utilisateur existant
+  it('should login an existing user', async () => {
+    // Crée d'abord un utilisateur pour pouvoir le connecter
+    await request(app)
+      .post('/api/auth/signup')
+      .field('username', 'testuser')
+      .field('email', 'test@example.com')
+      .field('password', 'testpassword')
+      .attach('picture', `${__dirname}/../uploads/profile/test.png`);
+
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'test@example.com',
+        password: 'testpassword'
+      });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Connexion réussie !');
+    expect(res.body).toHaveProperty('token');
+    expect(res.body.user).toHaveProperty('id');
+    expect(res.body.user).toHaveProperty('username', 'testuser');
+  });
+
+  // Test de la route login pour un utilisateur non trouvé
+  it('should return error if user is not found', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'nonexistent@example.com',
+        password: 'testpassword'
+      });
+
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toHaveProperty('error', 'Utilisateur non trouvé !');
+  });
+
+  // Test de la route login pour un mot de passe incorrect
+  it('should return error if password is incorrect', async () => {
+    await request(app)
+      .post('/api/auth/signup')
+      .field('username', 'testuser')
+      .field('email', 'test@example.com')
+      .field('password', 'testpassword')
+      .attach('picture', `${__dirname}/../uploads/profile/test.png`);
+
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({
+        email: 'test@example.com',
+        password: 'wrongpassword'
+      });
+
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toHaveProperty('error', 'Mot de passe incorrect !');
+  });
+
+  // Test de la création d'un administrateur
+  it('should create a new admin', async () => {
+    const res = await request(app)
+    .post('/api/auth/admin')
+    .field('username', 'adminuser')
+    .field('email', 'admin@example.com')
+    .field('password', 'adminpassword')
+    .attach('picture',`${__dirname}/../uploads/profile/test.png`); // Envoie de l'image
+
+  expect(res.statusCode).toBe(201);
+  expect(res.body).toHaveProperty('message', 'Administrateur créé avec succès !');
+
+  const admin = await User.findOne({ email: 'admin@example.com' });
+  expect(admin).toBeTruthy();
+  expect(admin.role).toBe('admin');
+  expect(admin.picture).toContain('/uploads/profile/test.png'); // Vérifie que le chemin de l'image est correct
+});
+
+
+  // Test de la déconnexion
+  it('should logout the user', async () => {
+    const res = await request(app)
+      .post('/api/auth/logout');
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('message', 'Déconnexion réussie !');
+  });
+});

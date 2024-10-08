@@ -1,0 +1,66 @@
+.requeste{
+box-shadow: 0 1px 6px -4px blue;
+display: flex;
+flex-direction: column;
+padding: 10px;
+overflow: hidden;
+border-radius: 10px;
+margin-right: 10px;
+margin-bottom: 10px;
+
+
+}
+
+.requeste_details{
+  display: flex; 
+  align-items: center; 
+  padding-top: 4px;
+}
+
+.requeste_details p{
+font-size: 12px;
+
+}
+.requeste_insewers{
+
+margin-top: 10px;
+display: flex;
+justify-content: space-between;
+
+}
+.requeste_insewers button{
+cursor: pointer;
+width: 40%;
+padding: 8px 10px;
+border: none;
+border-radius: 10px;
+
+
+}
+.accepter_btn{
+  background-color: blue; 
+  color: white; 
+}
+.accepter_btn:hover{
+    border: 1px solid blue;
+  }
+  
+
+.refuser_btn{
+    background-color:white; 
+    color: blue;
+    border: 1px solid blue !important ; 
+  }
+
+
+
+
+.requeste .user_image{
+object-fit: cover;
+width: 45px;
+height: 40px;
+border-radius: 8px;
+margin-right: 10px;
+
+
+}
