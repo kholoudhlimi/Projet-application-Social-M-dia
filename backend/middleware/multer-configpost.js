@@ -6,7 +6,7 @@ const MIME_TYPES = {
   'image/png': 'png'
 };
 
-const storagePost = multer.diskStorage({
+const storageProfile = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, './uploads/post');
   },
@@ -17,5 +17,4 @@ const storagePost = multer.diskStorage({
   }
 });
 
-module.exports = multer({storage: storagePost}).single('image')
-
+module.exports = multer({storage: storageProfile}).single('imageUrl');
