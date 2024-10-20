@@ -6,7 +6,7 @@ const auth = require('../middleware/auth');
 const isAdmin = require('../middleware/admin');
 
 // Créer un nouveau post (avec upload d'image)
-router.post('/post', auth,multer, postController.createPost);
+router.post('/post', auth, multer, postController.createPost);
 
 // Récupérer tous les posts (accessible à l'admin)
 router.get('/post', auth, postController.getAllPosts);
@@ -15,7 +15,7 @@ router.get('/post', auth, postController.getAllPosts);
 router.get('/post/:id', auth, postController.getPostById);
 
 // Mettre à jour un post (avec upload d'image)
-router.put('/post/:id', auth, multer, postController.updatePost);
+router.put('/post/:id',auth, multer, postController.updatePost);
 
 // Supprimer un post
 router.delete('/post/:id', auth, postController.deletePost);

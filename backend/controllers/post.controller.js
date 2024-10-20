@@ -1,13 +1,18 @@
 const Post = require('../models/post.model');
-const fs = require('fs');
+const fs = require('fs').promises; 
+
 
 // Fonction pour créer un post
 exports.createPost = async (req, res) => {
   try {
-    const { description, userId } = req.body;
-    let imageUrl = null;
+    const { description } = req.body;
+    const userId = req.auth.userId;  // Récupération de l'ID utilisateur depuis l'authentification
 
-    // Vérification si un fichier a été téléchargé
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    let imageUrl = null;
     if (req.file) {
       imageUrl = `${req.protocol}://${req.get('host')}/uploads/post/${req.file.filename}`;
     }
@@ -16,7 +21,7 @@ exports.createPost = async (req, res) => {
       description,
       imageUrl,
       userId,
-      coments: []
+      coments: [] // Initialisation avec un tableau vide de commentaires
     });
 
     const savedPost = await post.save();
@@ -29,36 +34,30 @@ exports.createPost = async (req, res) => {
 // Fonction pour récupérer tous les posts
 exports.getAllPosts = async (req, res) => {
   try {
-    console.log("Fetching all posts..."); // Log the start of the fetch
     const posts = await Post.find()
-      .populate('userId', 'username picture')
-      .populate('coments');
-    
-    console.log("Posts fetched successfully:", posts); // Log the fetched posts
-    console.log("User IDs in posts:", posts.map(post => post.userId));
+      .populate('coments'); // Si vous avez un modèle de commentaires
+
     res.status(200).json(posts);
   } catch (error) {
-    console.error("Error fetching posts:", error.stack); // Log the error stack
-    res.status(500).json({ message: 'Error retrieving posts', error: error.message });
+    res.status(500).json({ message: 'Erreur lors de la récupération des posts', error: error.message });
   }
 };
-
 // Fonction pour récupérer un post par ID
 exports.getPostById = async (req, res) => {
   try {
+    console.log("ID du post demandé:", req.params.id); // Log de l'ID
     const post = await Post.findById(req.params.id)
-      .populate('userId', 'name email')
-      .populate('coments');
-
     if (!post) {
       return res.status(404).json({ message: 'Post non trouvé' });
     }
-
     res.status(200).json(post);
   } catch (error) {
+    console.error('Erreur lors de la récupération du post:', error);
     res.status(500).json({ message: 'Erreur lors de la récupération du post', error: error.message });
   }
 };
+
+// Fonction pour mettre à jour un post
 exports.updatePost = async (req, res) => {
   try {
     const postId = req.params.id;
@@ -82,12 +81,10 @@ exports.updatePost = async (req, res) => {
     const updatedPost = await post.save();
     res.status(200).json({ message: "Post mis à jour avec succès", post: updatedPost });
   } catch (error) {
-    console.error(error);
+    console.error('Erreur lors de la mise à jour du post:', error);
     res.status(500).json({ message: "Échec de la mise à jour du post", error: error.message });
   }
 };
-
-// Importation du système de fichiers
 
 // Fonction pour supprimer un post
 exports.deletePost = async (req, res) => {
@@ -98,6 +95,13 @@ exports.deletePost = async (req, res) => {
       return res.status(404).json({ message: 'Post non trouvé' });
     }
 
+    // Vérification de l'authenticité de l'utilisateur
+    const userId = req.auth.userId;
+    if (postToDelete.userId.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Vous n'avez pas la permission de supprimer ce post" });
+    }
+
+    // Suppression de l'image associée, s'il y en a une
     if (postToDelete.imageUrl) {
       const filePath = `uploads/post/${postToDelete.imageUrl.split('/').pop()}`;
 

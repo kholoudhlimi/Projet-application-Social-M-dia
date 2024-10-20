@@ -1,23 +1,16 @@
+
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader) {
-      return res.status(401).json({ error: 'Token non fourni' });
-    }
-    
-    const token = authHeader.split(' ')[1]; // Récupération du token (second élément après 'Bearer')
+    // Vérification de l'en-tête d'autorisation pour obtenir le token
+    const token = req.headers.authorization.split(' ')[1];
+    // Décodage du token
     const decodedToken = jwt.verify(token, process.env.CLE);
-
-    if (!decodedToken.id) {
-      return res.status(401).json({ error: 'ID utilisateur non présent dans le token' });
-    }
-
-    req.auth = { userId: decodedToken.id }; // Utilisation du champ exact du token (vérifiez si c'est 'id' ou '_id')
-    next();
+    // Ajout de l'ID utilisateur à la requête
+    req.auth = { userId: decodedToken.id };
+    next(); // Passe au middleware suivant
   } catch (error) {
-    return res.status(401).json({ error: 'Token invalide ou expiré !' });
+    res.status(401).json({ error: 'Requête non authentifiée !' });
   }
 };

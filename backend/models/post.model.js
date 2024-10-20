@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Comment = require("./coment.model"); // Corrigé le nom du fichier
-
+const auth = require("./user.model")
 const postSchema = new mongoose.Schema({
   description: { 
     type: String, 
