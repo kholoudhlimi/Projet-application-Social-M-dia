@@ -96,46 +96,57 @@ describe('Coment Controller', () => {
     expect(response.body).toEqual(mockComents);
     expect(Coment.find).toHaveBeenCalledWith({ postId: '615f7f0f1c9d440000bda9cf' });
   });
-
+ 
   // Test pour mettre à jour un commentaire
-  it('devrait mettre à jour un commentaire', async () => {
+  it('devrait mettre à jour un commentaire si l\'utilisateur est le propriétaire ou un admin', async () => {
     const mockComent = {
       _id: '615f7f0f1c9d440000bda9d1',
       userId: '6711744963960e1afcdf7b9',
       postId: '615f7f0f1c9d440000bda9cf',
       coment: 'Ceci est un commentaire',
+      save: jest.fn(), // Simulez la méthode save
     };
-
-    Coment.findByIdAndUpdate.mockResolvedValue(mockComent); // Simule la mise à jour du commentaire
-
+  
+    // Simule la récupération du commentaire
+    Coment.findById.mockResolvedValue(mockComent);
+    // Simulez l'enregistrement du commentaire mis à jour
+    const updatedComent = { ...mockComent, coment: 'Commentaire mis à jour' };
+    mockComent.save.mockResolvedValue(updatedComent);
+  
     const response = await request(app)
-      .put('/api/coments/coment/615f7f0f1c9d440000bda9d1')
+      .put('/api/coments/coment/' + mockComent._id)
       .send({ coment: 'Commentaire mis à jour' });
-
+  
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(mockComent);
-    expect(Coment.findByIdAndUpdate).toHaveBeenCalledWith(
-      '615f7f0f1c9d440000bda9d1',
-      { coment: 'Commentaire mis à jour' },
-      { new: true, runValidators: true }
-    );
+    // Vérifiez uniquement les propriétés que vous attendez
+    expect(response.body).toEqual({
+      _id: updatedComent._id,
+      coment: 'Commentaire mis à jour',
+      postId: updatedComent.postId,
+      userId: updatedComent.userId,
+    });
+    expect(Coment.findById).toHaveBeenCalledWith(mockComent._id);
+    expect(mockComent.save).toHaveBeenCalled();
   });
-
   // Test pour supprimer un commentaire
-  it('devrait supprimer un commentaire', async () => {
+  it('devrait supprimer un commentaire si l\'utilisateur est le propriétaire ou un admin', async () => {
     const mockComent = {
       _id: '615f7f0f1c9d440000bda9d1',
       userId: '6711744963960e1afcdf7b9',
       postId: '615f7f0f1c9d440000bda9cf',
       coment: 'Ceci est un commentaire',
     };
-
-    Coment.findByIdAndDelete.mockResolvedValue(mockComent); // Simule la suppression du commentaire
-
-    const response = await request(app).delete('/api/coments/coment/615f7f0f1c9d440000bda9d1');
-
+  
+    // Simule la récupération du commentaire
+    Coment.findById.mockResolvedValue(mockComent); 
+  
+    const response = await request(app).delete('/api/coments/coment/' + mockComent._id);
+  
+    // Simulez la suppression du commentaire
+    Coment.findByIdAndDelete.mockResolvedValue(mockComent);
+  
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('message', 'Commentaire supprimé avec succès');
-    expect(Coment.findByIdAndDelete).toHaveBeenCalledWith('615f7f0f1c9d440000bda9d1');
+    expect(Coment.findByIdAndDelete).toHaveBeenCalledWith(mockComent._id);
   });
 });

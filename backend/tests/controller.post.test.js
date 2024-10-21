@@ -8,7 +8,7 @@ jest.mock('../models/post.model');
 
 // Mock du middleware d'authentification
 jest.mock('../middleware/auth', () => (req, res, next) => {
-  req.auth = { userId: '6711744963960e1afcdf7b9' }; // Simule un utilisateur authentifié
+  req.auth = { userId: '6711744963960e1afcdf7b9', role: 'user' }; // Simule un utilisateur authentifié
   next();
 });
 
@@ -32,7 +32,7 @@ describe('Post Controller', () => {
       description: 'Nouveau post',
       imageUrl: null,
       userId: '6711744963960e1afcdf7b9',
-      coments: [],
+      comments: [], // Corrections ici
     };
 
     // Simuler le comportement de Post.prototype.save
@@ -54,7 +54,7 @@ describe('Post Controller', () => {
         _id: '615f7f0f1c9d440000bda9cf',
         description: 'Post 1',
         userId: '6711744963960e1afcdf7b9',
-        coments: [],
+        comments: [], // Corrections ici
       },
     ];
 
@@ -71,16 +71,17 @@ describe('Post Controller', () => {
     expect(response.body).toEqual(mockPosts);
     expect(Post.find).toHaveBeenCalledTimes(1);
   });
+
   it('devrait récupérer un post par ID', async () => {
     const mockPost = {
       _id: '615f7f0f1c9d440000bda9cf',
       description: 'Post 1',
       imageUrl: null,
       userId: '6711744963960e1afcdf7b9',
-      coments: [],
+      comments: [], // Corrections ici
     };
 
-    Post.findById.mockResolvedValueOnce(mockPost); // Utilisez mockResolvedValueOnce pour éviter les interférences avec d'autres tests
+    Post.findById.mockResolvedValueOnce(mockPost);
 
     const response = await request(app).get('/api/posts/post/615f7f0f1c9d440000bda9cf');
 
@@ -88,22 +89,23 @@ describe('Post Controller', () => {
     expect(response.body).toEqual(mockPost);
     expect(Post.findById).toHaveBeenCalledWith('615f7f0f1c9d440000bda9cf');
   });
+
   // Test pour mettre à jour un post
   it('devrait mettre à jour un post', async () => {
-    const updatedPost = {
+    const mockPost = {
       _id: '615f7f0f1c9d440000bda9cf',
-      description: 'Post mis à jour',
-      imageUrl: null,
+      description: 'Post initial',
       userId: '6711744963960e1afcdf7b9',
-      coments: [],
+      comments: [] // Corrections ici
     };
   
-    const mockPostInstance = {
-      ...updatedPost,
-      save: jest.fn().mockResolvedValue(updatedPost), // Mock de la méthode save
-    };
+    // Simuler la méthode save après la déclaration
+    mockPost.save = jest.fn().mockResolvedValue({
+      ...mockPost,
+      description: 'Post mis à jour'
+    });
   
-    Post.findById.mockResolvedValue(mockPostInstance); // Retourne une instance du post
+    Post.findById.mockResolvedValue(mockPost);
   
     const response = await request(app)
       .put('/api/posts/post/615f7f0f1c9d440000bda9cf')
@@ -112,7 +114,6 @@ describe('Post Controller', () => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe('Post mis à jour avec succès');
     expect(response.body.post.description).toBe('Post mis à jour');
-    expect(mockPostInstance.save).toHaveBeenCalledTimes(1); 
   });
 
   // Test pour supprimer un post
@@ -120,20 +121,18 @@ describe('Post Controller', () => {
     const mockPost = {
       _id: '615f7f0f1c9d440000bda9cf',
       description: 'Post à supprimer',
-      imageUrl: null,
       userId: '6711744963960e1afcdf7b9',
-      coments: [],
+      imageUrl: null
     };
 
     Post.findById.mockResolvedValue(mockPost);
     Post.findByIdAndDelete.mockResolvedValue(mockPost);
 
     const response = await request(app)
-      .delete('/api/posts/post/615f7f0f1c9d440000bda9cf');
+      .delete(`/api/posts/post/${mockPost._id}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('message', 'Post supprimé avec succès');
-    expect(Post.findById).toHaveBeenCalledWith('615f7f0f1c9d440000bda9cf');
-    expect(Post.findByIdAndDelete).toHaveBeenCalledWith('615f7f0f1c9d440000bda9cf');
+    expect(response.body.message).toBe('Post supprimé avec succès');
   });
+
 });

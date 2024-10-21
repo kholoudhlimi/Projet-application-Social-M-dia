@@ -53,24 +53,28 @@ exports.getComentsByPostId = async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la récupération des commentaires', error: error.message });
   }
 };
-
 // Fonction pour mettre à jour un commentaire
 exports.updateComent = async (req, res) => {
   try {
     const { coment } = req.body;
+    const userId = req.auth.userId;
+    const userRole = req.auth.role;
 
-    const updatedComent = await Coment.findByIdAndUpdate(
-      req.params.id,
-      { coment },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedComent) {
+    const existingComent = await Coment.findById(req.params.id);
+    if (!existingComent) {
       return res.status(404).json({ message: 'Commentaire non trouvé' });
     }
 
-    res.status(200).json(updatedComent);
+    // Vérification des permissions
+    if (userRole === 'admin' || existingComent.userId.toString() === userId) {
+      existingComent.coment = coment || existingComent.coment;
+      const updatedComent = await existingComent.save();
+      res.status(200).json(updatedComent);
+    } else {
+      return res.status(403).json({ message: 'Vous n\'avez pas la permission de modifier ce commentaire' });
+    }
   } catch (error) {
+    console.error('Erreur lors de la mise à jour du commentaire:', error);
     res.status(500).json({ message: 'Erreur lors de la mise à jour du commentaire', error: error.message });
   }
 };
@@ -78,13 +82,22 @@ exports.updateComent = async (req, res) => {
 // Fonction pour supprimer un commentaire
 exports.deleteComent = async (req, res) => {
   try {
-    const deletedComent = await Coment.findByIdAndDelete(req.params.id);
+    const userId = req.auth.userId;
+    const userRole = req.auth.role; // Récupération du rôle de l'utilisateur
 
-    if (!deletedComent) {
+    // Vérifie si le commentaire existe
+    const existingComent = await Coment.findById(req.params.id);
+    if (!existingComent) {
       return res.status(404).json({ message: 'Commentaire non trouvé' });
     }
 
-    res.status(200).json({ message: 'Commentaire supprimé avec succès' });
+    // Vérification des permissions
+    if (userRole === 'admin' || existingComent.userId.toString() === userId) {
+      await Coment.findByIdAndDelete(req.params.id); // Supprime le commentaire
+      res.status(200).json({ message: 'Commentaire supprimé avec succès' });
+    } else {
+      return res.status(403).json({ message: 'Vous n\'avez pas la permission de supprimer ce commentaire' });
+    }
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la suppression du commentaire', error: error.message });
   }
