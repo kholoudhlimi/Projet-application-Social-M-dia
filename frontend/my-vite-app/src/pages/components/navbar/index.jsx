@@ -1,11 +1,26 @@
 import './style.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
+import userService from './../../../services/userService';  // Adjust the path as necessary
 
 const Navbar = () => {
-  // Récupération des données de l'utilisateur
-  const userData = JSON.parse(localStorage.getItem('user_data')); // Récupération de l'objet utilisateur
-  const userPicture = userData ? userData.picture : ''; // Accès à l'image de profil
+  const [userData, setUserData] = useState(() => JSON.parse(localStorage.getItem('user_data')));
+  const userPicture = userData ? userData.picture : '';
+
+  const handleLogout = async () => {
+    try {
+      const message = await userService.logout(); // Call the logout function from userService
+      console.log(message); // Optional: display the success message
+      localStorage.removeItem('user_data');
+      localStorage.removeItem('token'); // Clear the token as well
+      localStorage.removeItem('userId'); // Clear the userId if applicable
+      setUserData(null);
+      window.location.href = '/login'; // Redirect to login page
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
 
   return (
     <div className="navbar">
@@ -17,7 +32,7 @@ const Navbar = () => {
           <FontAwesomeIcon icon={faMagnifyingGlass} className="small gray" />
           <input type="text" placeholder="rechercher ..." />
         </div>
-        <button className="navbar_profile_button">
+        <button className="navbar_profile_button" onClick={handleLogout}>
           Déconnexion
         </button>
         <div className="navbar_profile_image">

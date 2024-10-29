@@ -37,7 +37,8 @@ exports.createComent = async (req, res) => {
 // Fonction pour récupérer tous les commentaires
 exports.getAllComents = async (req, res) => {
   try {
-    const coments = await Coment.find();
+    const coments = await Coment.find().populate('userId', 'username picture')
+    .exec();
     res.status(200).json(coments);
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la récupération des commentaires', error: error.message });

@@ -1,0 +1,83 @@
+
+
+.comment {
+    display: flex;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.comment_user_details {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.user-picture {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    overflow: hidden;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.user_name h5 {
+    margin: 0;
+    font-size: 13px;
+    color: #333;
+}
+
+.user_name span {
+    font-size: 10px;
+    color: #888;
+}
+
+.comment_content {
+    flex-grow: 1;
+}
+
+.comment_content p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.comment_content button {
+    margin-right: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.comment_content button:hover {
+    background-color: #0056b3;
+}
+
+.comment_content button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.comment_actions {
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    cursor: pointer;
+    margin-left: 10px;
+    color: #007BFF; /* Couleur de l'icône */
+    font-size: 1.2em; /* Taille de l'icône */
+}
+
+.icon:hover {
+    color: #0056b3; /* Couleur au survol */
+}

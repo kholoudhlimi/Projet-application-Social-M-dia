@@ -1,7 +1,7 @@
 import toast, { Toaster } from 'react-hot-toast';
 import React, { useState } from "react";
-import userService from "../services/userService"; // Assurez-vous que le chemin est correct
-import { useNavigate } from 'react-router-dom';
+import userService from "../services/userService"; // Ensure this path is correct
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -20,14 +20,14 @@ const Login = () => {
             localErrors.email = "Email requis";
             status = false;
         } else {
-            localErrors.email = ''; // Réinitialiser l'erreur si l'email est valide
+            localErrors.email = ''; // Reset error if email is valid
         }
 
         if (password === '' || password.length < 8) {
             localErrors.password = "Mot de passe requis et minimum 8 caractères";
             status = false;
         } else {
-            localErrors.password = ''; // Réinitialiser l'erreur si le mot de passe est valide
+            localErrors.password = ''; // Reset error if password is valid
         }
 
         setErrors(localErrors);
@@ -45,19 +45,19 @@ const Login = () => {
             };
 
             try {
-                const response = await userService.login(data); // Utilisez 'data' ici
-                console.log("Réponse de l'API :", response.data); // Log de la réponse
+                const response = await userService.login(data);
+                console.log("Réponse de l'API :", response.data);
+                const token = response.data.token;
+                const userId = response.data.user.id;
+                const userPicture = response.data.user.picture;
+                const username = response.data.user.username;
+                const userRole = response.data.user.role;
 
-                const token = response.data.token; // Assurez-vous que votre API retourne le token
-                const userId = response.data.user.id; // Assurez-vous que votre API retourne l'ID de l'utilisateur
-                const userPicture = response.data.user.picture; // Assurez-vous que votre API retourne l'image de profil
-                const username = response.data.user.username; // Assurez-vous que votre API retourne le nom d'utilisateur
+                // Store user data in localStorage
+                localStorage.setItem('token', token);
+                localStorage.setItem('user_data', JSON.stringify({ id: userId, picture: userPicture, username, userRole }));
 
-                // Stocker les données utilisateur dans localStorage
-                localStorage.setItem('token', token); // Stockez le token
-                localStorage.setItem('user_data', JSON.stringify({ id: userId, picture: userPicture, username })); // Stockez les données utilisateur
-
-                // Afficher un message de succès et rediriger
+                // Show success message and redirect
                 toast.success("Utilisateur connecté !");
                 navigate('/home');
             } catch (error) {
@@ -113,6 +113,10 @@ const Login = () => {
                         Se connecter
                     </button>
                 </form>
+
+                <div className="register-link">
+                    <p>Vous n'avez pas de compte ? <Link to="/register">S'inscrire</Link></p>
+                </div>
             </div>
         </div>
     );

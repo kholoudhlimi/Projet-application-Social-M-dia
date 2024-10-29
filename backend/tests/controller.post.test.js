@@ -24,7 +24,6 @@ afterAll(async () => {
 
 // Tests pour le contrôleur Post
 describe('Post Controller', () => {
-  
   // Test pour créer un post
   it('devrait créer un nouveau post', async () => {
     const mockPost = {
@@ -32,16 +31,13 @@ describe('Post Controller', () => {
       description: 'Nouveau post',
       imageUrl: null,
       userId: '6711744963960e1afcdf7b9',
-      comments: [], // Corrections ici
+      coments: [], // Corrections ici
     };
-
     // Simuler le comportement de Post.prototype.save
     Post.prototype.save = jest.fn().mockResolvedValue(mockPost);
-
     const response = await request(app)
       .post('/api/posts/post')
       .send({ description: 'Nouveau post' });
-
     expect(response.status).toBe(201);
     expect(response.body).toEqual(mockPost);
     expect(Post.prototype.save).toHaveBeenCalledTimes(1);
@@ -53,32 +49,40 @@ describe('Post Controller', () => {
       {
         _id: '615f7f0f1c9d440000bda9cf',
         description: 'Post 1',
-        userId: '6711744963960e1afcdf7b9',
-        comments: [], // Corrections ici
+        imageUrl: null,
+        userId: {
+          _id: '6711744963960e1afcdf7b9',
+          username: 'Test',
+          picture: 'test.png',
+        },
+        coments: [],
       },
     ];
-
-    const mockPostQuery = {
-      populate: jest.fn().mockResolvedValue(mockPosts),
-      exec: jest.fn().mockResolvedValue(mockPosts),
-    };
-
-    Post.find.mockReturnValue(mockPostQuery); // Mock la méthode find
-
+  
+    // Mock de la méthode find
+    Post.find.mockReturnValue({
+      populate: jest.fn().mockReturnValue({
+        populate: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(mockPosts), // Retourne les posts
+        }),
+      }),
+    });
+  
     const response = await request(app).get('/api/posts/post');
-
+    
+    console.log('Response Body:', response.body); // Pour voir ce qui est retourné
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockPosts);
     expect(Post.find).toHaveBeenCalledTimes(1);
   });
-
+  
   it('devrait récupérer un post par ID', async () => {
     const mockPost = {
       _id: '615f7f0f1c9d440000bda9cf',
       description: 'Post 1',
       imageUrl: null,
       userId: '6711744963960e1afcdf7b9',
-      comments: [], // Corrections ici
+      coments: [], // Corrections ici
     };
 
     Post.findById.mockResolvedValueOnce(mockPost);
@@ -96,7 +100,7 @@ describe('Post Controller', () => {
       _id: '615f7f0f1c9d440000bda9cf',
       description: 'Post initial',
       userId: '6711744963960e1afcdf7b9',
-      comments: [] // Corrections ici
+      coments: [] // Corrections ici
     };
   
     // Simuler la méthode save après la déclaration

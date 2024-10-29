@@ -1,77 +1,4 @@
-// import axios from 'axios';
 
-// const userService = {};
-
-// // Fonction pour créer un administrateur
-// userService.admin = function(data) {
-//     return axios.post('http://localhost:3000/api/auth/admin', data, {
-//         headers: {
-//             'Content-Type': 'multipart/form-data'
-//         }
-//     });
-// };
-
-// // Fonction pour s'inscrire
-// userService.register = function(data) {
-//     return axios.post('http://localhost:3000/api/auth/signup', data, {
-//         headers: {
-//             'Content-Type': 'multipart/form-data'
-//         }
-//     });
-// };
-
-// // Fonction pour se connecter
-// userService.login = function(data) {
-//     return axios.post('http://localhost:3000/api/auth/login', data);
-// };
-
-// // Fonction pour créer un post
-// userService.createPost = async function(data) {
-//     const token = localStorage.getItem('token');
-//     console.log("Token récupéré :", token); // Log pour déboguer
-//     if (!token) {
-//         throw new Error("Token not found");
-//     }
-
-//     try {
-//         return await axios.post('http://localhost:3000/api/posts/post', data, {
-//             headers: {
-//                 'Content-Type': 'multipart/form-data',
-//                 'Authorization': `Bearer ${token}`
-//             }
-//         });
-//     } catch (error) {
-//         console.error("Erreur lors de la création du post :", error);
-//         throw error; // Relancer l'erreur pour la gérer dans le composant
-//     }
-// };
-
-// // Fonction pour récupérer tous les posts
-// userService.getPosts = async function() {
-//     const token = localStorage.getItem('token'); // Récupérez le token
-//     return await axios.get('http://localhost:3000/api/posts/post', {
-//         headers: {
-//             'Authorization': `Bearer ${token}` // Incluez le token dans les en-têtes
-//         }
-//     });
-// };
-
-// // Fonction pour récupérer un post par ID
-// userService.getPostById = function(id) {
-//     return axios.get(`http://localhost:3000/api/posts/post/${id}`);
-// };
-
-// // Fonction pour mettre à jour un post
-// userService.updatePost = function(id, data) {
-//     return axios.put(`http://localhost:3000/api/posts/post/${id}`, data);
-// };
-
-// // Fonction pour supprimer un post
-// userService.deletePost = function(id) {
-//     return axios.delete(`http://localhost:3000/api/posts/post/${id}`);
-// };
-
-// export default userService;
 import axios from 'axios';
 
 const userService = {};
@@ -87,6 +14,7 @@ userService.admin = function(data) {
 
 // Fonction pour s'inscrire
 userService.register = function(data) {
+    
     return axios.post('http://localhost:3000/api/auth/signup', data, {
         headers: {
             'Content-Type': 'multipart/form-data'
@@ -95,62 +23,45 @@ userService.register = function(data) {
 };
 
 // Fonction pour se connecter
-userService.login = function(data) {
-    return axios.post('http://localhost:3000/api/auth/login', data);
-};
-
-// Fonction pour créer un post
-userService.createPost = async function(data) {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        throw new Error("Token not found");
-    }
-
+// Fonction pour se connecter
+userService.login = async function(data) {
     try {
-        return await axios.post('http://localhost:3000/api/posts/post', data, { // Correction de l'URL pour la création de post
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${token}`
-            }
-        });
+        const response = await axios.post('http://localhost:3000/api/auth/login', data);
+        
+        // Vérifiez la structure de la réponse
+        console.log("Réponse de l'API :", response.data); // Vérifiez ici
+
+        // Mettez à jour la récupération de userId
+        const { token, user } = response.data; // Changez ici
+        const userId = user.id; // Extraire l'ID utilisateur de l'objet user
+
+        // Stocker le token et l'ID utilisateur dans le localStorage
+        localStorage.setItem('token', token);
+        localStorage.setItem('userId', userId); // Stockez l'ID utilisateur ici
+
+        return response;
     } catch (error) {
-        console.error("Erreur lors de la création du post :", error);
-        throw error; // Relancer l'erreur pour la gérer dans le composant
+        console.error("Erreur lors de la connexion :", error);
+        throw error;
     }
 };
 
-// Fonction pour récupérer tous les posts
-userService.getPosts = async function() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        throw new Error("Token not found");
-    }
-
+userService.logout = async function() {
     try {
-        return await axios.get('http://localhost:3000/api/posts/post', { // Correction de l'URL pour récupérer tous les posts
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+        const response = await axios.post('http://localhost:3000/api/auth/logout', null, {
+       
         });
+
+        if (response.status !== 200) {
+            throw new Error('Logout failed');
+        }
+
+        return response.data.message; // Return the success message
     } catch (error) {
-        console.error("Erreur lors de la récupération des posts :", error);
-        throw error; // Relancer l'erreur pour la gérer dans le composant
+        console.error('Error during logout:', error);
+        throw error; // Rethrow the error to handle it in the component
     }
 };
-
-// Fonction pour récupérer un post par ID
-userService.getPostById = function(id) {
-    return axios.get(`http://localhost:3000/api/posts/${id}`); // Correction de l'URL
-};
-
-// Fonction pour mettre à jour un post
-userService.updatePost = function(id, data) {
-    return axios.put(`http://localhost:3000/api/posts/post/${id}`, data); // Correction de l'URL
-};
-
-// Fonction pour supprimer un post
-userService.deletePost = function(id) {
-    return axios.delete(`http://localhost:3000/api/posts/post/${id}`); // Correction de l'URL
-};
+  
 
 export default userService;

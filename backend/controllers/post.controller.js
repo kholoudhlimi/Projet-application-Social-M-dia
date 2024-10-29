@@ -20,7 +20,7 @@ exports.createPost = async (req, res) => {
       description,
       imageUrl,
       userId,
-      comments: [] // Initialisation avec un tableau vide de commentaires
+      coments: [] // Initialisation avec un tableau vide de commentaires
     });
 
     const savedPost = await post.save();
@@ -30,13 +30,17 @@ exports.createPost = async (req, res) => {
   }
 };
 
-// Fonction pour récupérer tous les posts
 exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find().populate('comments'); // Si tu as un modèle de commentaires
+    const posts = await Post.find()
+      .populate('userId', 'username picture')
+      .populate('coments') // Vérifiez si le champ "coments" est bien écrit dans le modèle
+      .exec();
+    console.log("Posts récupérés :", posts); // Pour déboguer
     res.status(200).json(posts);
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la récupération des posts', error: error.message });
+    console.error('Erreur lors de la récupération des posts:', error); // Pour aider à identifier des problèmes
+    res.status(500).json({ message: 'Erreur lors de la récupération des posts' });
   }
 };
 

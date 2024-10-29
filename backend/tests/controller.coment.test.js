@@ -53,29 +53,41 @@ describe('Coment Controller', () => {
 
   // Test pour récupérer tous les commentaires
   it('devrait récupérer tous les commentaires', async () => {
+    // Données mockées
     const mockComents = [
       {
-        _id: '615f7f0f1c9d440000bda9d1',
-        userId: '6711744963960e1afcdf7b9',
-        postId: '615f7f0f1c9d440000bda9cf',
-        coment: 'Ceci est un commentaire',
+        _id: '615f7f0f1c9d440000bda9cf',
+        text: 'Premier commentaire',
+        userId: {
+          username: 'TestUser',
+          picture: 'test.png'
+        }
       },
       {
-        _id: '615f7f0f1c9d440000bda9d2',
-        userId: '6711744963960e1afcdf7b9',
-        postId: '615f7f0f1c9d440000bda9cf',
-        coment: 'Ceci est un autre commentaire',
-      },
+        _id: '615f7f0f1c9d440000bda9d0',
+        text: 'Deuxième commentaire',
+        userId: {
+          username: 'AnotherUser',
+          picture: 'another.png'
+        }
+      }
     ];
 
-    Coment.find.mockResolvedValue(mockComents); // Simule la récupération des commentaires
+    // Mock de la méthode find et populate
+    Coment.find.mockReturnValue({
+      populate: jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockComents)
+      })
+    });
 
     const response = await request(app).get('/api/coments/coment');
 
+    // Assertions
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockComents);
     expect(Coment.find).toHaveBeenCalledTimes(1);
   });
+
 
   // Test pour récupérer les commentaires par ID de post
   it('devrait récupérer les commentaires par ID de post', async () => {
