@@ -4,31 +4,29 @@ const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 // Importation du module jsonwebtoken pour la gestion des tokens JWT
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
-exports.signup = (req, res, next) => {
-  // Vérification si un fichier a été téléchargé
-  if (!req.file) {
-    return res.status(400).json({ error: 'Aucune image téléchargée.' });
+
+exports.signup = async (req, res, next) => {
+  const { username, email, password } = req.body;
+
+  try {
+    // Hachage du mot de passe avec bcrypt
+    const hash = await bcrypt.hash(password, 10);
+
+    // Création d'un nouvel utilisateur
+    const newUser = new User({
+      username,
+      email,
+      password: hash,
+      picture: req.file ? `${req.protocol}://${req.get('host')}/uploads/profile/${req.file.filename}` : null, // ou une image par défaut
+      role: 'user'
+    });
+
+    // Sauvegarde de l'utilisateur dans la base de données
+    await newUser.save();
+    res.status(201).json({ message: 'Utilisateur créé !' });
+  } catch (error) {
+    res.status(400).json({ error });
   }
-
-  // Hachage du mot de passe avec bcrypt
-  bcrypt.hash(req.body.password, 10)
-    .then(hash => {
-      // Création d'un nouvel utilisateur
-      const newUser = new User({
-        username: req.body.username,
-        email: req.body.email,
-        password: hash,
-        picture: `${req.protocol}://${req.get('host')}/uploads/profile/${req.file.filename}`, 
-        role: 'user'
-      });
-
-      // Sauvegarde de l'utilisateur dans la base de données
-      newUser.save()
-        .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-        .catch(error => res.status(400).json({ error }));
-    })
-    .catch(error => res.status(500).json({ error }));
 };
 
 // Fonction pour la connexion d'un utilisateur
@@ -55,13 +53,12 @@ exports.login = async (req, res) => {
     res.status(200).json({
       message: 'Connexion réussie !',
       token,
-      user: { id: user._id, username: user.username, picture:user.picture, role: user.role }
+      user: { id: user._id, username: user.username, picture: user.picture, role: user.role }
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 // Fonction pour la création d'un administrateur
 exports.createAdmin = async (req, res) => {
@@ -80,7 +77,7 @@ exports.createAdmin = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      picture: `${req.protocol}://${req.get('host')}/uploads/profile/${req.file.filename}`,
+      picture: req.file ? `${req.protocol}://${req.get('host')}/uploads/profile/${req.file.filename}` : null, // ou une image par défaut
       role: 'admin'
     });
 

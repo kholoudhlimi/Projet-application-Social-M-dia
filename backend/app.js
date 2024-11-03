@@ -8,9 +8,11 @@ require('dotenv').config({ path: './config/.env' });
 
 // Configuration de la connexion à MongoDB
 const MONGO_ACCESS = process.env.MONGO_LAB;
-mongoose.connect(MONGO_ACCESS)
-  .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch((error) => console.error('Connexion à MongoDB échouée !', error));
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(MONGO_ACCESS)
+    .then(() => console.log('Connexion à MongoDB réussie !'))
+    .catch((error) => console.error('Connexion à MongoDB échouée !', error));
+}
 
 // Configuration des en-têtes CORS
 const cors = require('cors');

@@ -22,7 +22,8 @@ const userSchema = new mongoose.Schema({
     default: 'user',
   },
   picture: {
-    type: String, required: true 
+    type: String, // Enlever `required: true`
+    required: false, // Ajout de cette ligne pour indiquer que ce n'est pas obligatoire
   },
 });
 
@@ -33,7 +34,6 @@ userSchema.plugin(uniqueValidator);
 userSchema.methods.isAdmin = function() {
   return this.role === 'admin'; // Supposant que vous stockez le rôle dans une propriété 'role'
 };
-
 
 // Exportation du modèle utilisateur
 module.exports = mongoose.model('User', userSchema);
