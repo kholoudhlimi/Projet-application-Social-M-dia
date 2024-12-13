@@ -2,7 +2,7 @@
     max-width: 580px;
     margin: 10px;
     color: black;
-    box-shadow: 0 1px 6px -4px blue;
+    box-shadow: 0 1px 6px -4px rgb(18, 184, 132);
     padding: 10px;
     border-radius: 10px;
     background-color: white;
@@ -64,7 +64,7 @@
 }
 .new_post_btn button{
     cursor: pointer;
-    background-color: blue;
+    background-color:rgb(18, 184, 132);
     color: white;
     margin-top: 10px;
     padding: 8px 10px;

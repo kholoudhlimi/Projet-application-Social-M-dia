@@ -50,7 +50,7 @@
     padding: 5px 10px;
     font-size: 12px;
     color: #fff;
-    background-color: #007bff;
+    background-color: rgb(18, 184, 132);
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -58,7 +58,7 @@
 }
 
 .comment_content button:hover {
-    background-color: #0056b3;
+    background-color: rgb(145, 235, 207);
 }
 
 .comment_content button:disabled {
@@ -74,10 +74,10 @@
 .icon {
     cursor: pointer;
     margin-left: 10px;
-    color: #007BFF; /* Couleur de l'icône */
+    color: rgb(18, 184, 132); /* Couleur de l'icône */
     font-size: 1.2em; /* Taille de l'icône */
 }
 
 .icon:hover {
-    color: #0056b3; /* Couleur au survol */
+    color:rgb(121, 200, 175); /* Couleur au survol */
 }

@@ -1,8 +1,8 @@
 const request = require('supertest');
-const app = require('../app'); // Remplacez par le chemin vers votre fichier app.js ou server.js
+const app = require('../app'); 
 const Coment = require('../models/coment.model');
 const Post = require('../models/post.model');
-
+const mongoose= require('mongoose')
 // Mock du modèle Coment et Post
 jest.mock('../models/coment.model');
 jest.mock('../models/post.model');
@@ -17,7 +17,9 @@ jest.mock('../middleware/auth', () => (req, res, next) => {
 beforeEach(() => {
   jest.clearAllMocks();
 });
-
+afterAll(async () => {
+  await mongoose.disconnect(); // Fermer la connexion MongoDB
+});
 // Tests pour le contrôleur Coment
 describe('Coment Controller', () => {
   // Test pour créer un commentaire
@@ -116,12 +118,12 @@ describe('Coment Controller', () => {
       userId: '6711744963960e1afcdf7b9',
       postId: '615f7f0f1c9d440000bda9cf',
       coment: 'Ceci est un commentaire',
-      save: jest.fn(), // Simulez la méthode save
+      save: jest.fn(), // Simule la méthode save
     };
   
     // Simule la récupération du commentaire
     Coment.findById.mockResolvedValue(mockComent);
-    // Simulez l'enregistrement du commentaire mis à jour
+    // Simule l'enregistrement du commentaire mis à jour
     const updatedComent = { ...mockComent, coment: 'Commentaire mis à jour' };
     mockComent.save.mockResolvedValue(updatedComent);
   
@@ -130,7 +132,7 @@ describe('Coment Controller', () => {
       .send({ coment: 'Commentaire mis à jour' });
   
     expect(response.status).toBe(200);
-    // Vérifiez uniquement les propriétés que vous attendez
+    
     expect(response.body).toEqual({
       _id: updatedComent._id,
       coment: 'Commentaire mis à jour',
@@ -154,7 +156,7 @@ describe('Coment Controller', () => {
   
     const response = await request(app).delete('/api/coments/coment/' + mockComent._id);
   
-    // Simulez la suppression du commentaire
+    // Simule la suppression du commentaire
     Coment.findByIdAndDelete.mockResolvedValue(mockComent);
   
     expect(response.status).toBe(200);

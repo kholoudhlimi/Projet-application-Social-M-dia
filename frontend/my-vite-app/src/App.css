@@ -27,7 +27,7 @@ body {
 
 .register-cover
  {
-  background-image: url('../public/logo192.png');
+  background-image: url('../public/i.png');
   background-size: cover;
   width: 50%;
   height: 100%;
@@ -76,19 +76,19 @@ from-group label {
 }
 
 .signup ,.signin {
-  background-color: black;
+  background-color: rgb(18, 184, 132);
   color: white;
 }
 
 .signup:hover,
 .signin:hover {
   cursor: pointer;
-  background-color: rgb(137, 137, 140);
+  background-color: rgb(188, 226, 207);
   color: white;
 }
 
 .login-cover {
-  background-image: url('../public/logo192.png');
+  background-image: url('../public/i.png');
   background-size: cover;
   width: 50%;
   height: 100%;

@@ -2,7 +2,7 @@ import './style.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import userService from './../../../services/userService';  // Adjust the path as necessary
+import userService from './../../../services/userService';  
 
 const Navbar = () => {
   const [userData, setUserData] = useState(() => JSON.parse(localStorage.getItem('user_data')));
@@ -10,13 +10,13 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const message = await userService.logout(); // Call the logout function from userService
-      console.log(message); // Optional: display the success message
+      const message = await userService.logout(); 
+      console.log(message); 
       localStorage.removeItem('user_data');
-      localStorage.removeItem('token'); // Clear the token as well
-      localStorage.removeItem('userId'); // Clear the userId if applicable
+      localStorage.removeItem('token'); 
+      localStorage.removeItem('userId'); 
       setUserData(null);
-      window.location.href = '/login'; // Redirect to login page
+      window.location.href = '/login'; 
     } catch (error) {
       console.error('Error during logout:', error);
     }
@@ -25,7 +25,7 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="navbar_left">
-        <b>space chat</b>
+        <b>Social Working CLUB</b>
       </div>
       <div className="navbar_right">
         <div className="navbar_profile_search">

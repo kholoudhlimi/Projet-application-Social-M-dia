@@ -15,7 +15,7 @@ module.exports = async (req, res, next) => {
 
     // Vérification des permissions
     if (userRole === 'admin' || coment.userId.toString() === userId.toString()) {
-      // L'utilisateur est administrateur ou propriétaire du commentaire
+      
       next(); // Passer au middleware suivant ou à la route
     } else {
       return res.status(403).json({ message: "Accès refusé : vous n'avez pas la permission de modifier ou supprimer ce commentaire" });

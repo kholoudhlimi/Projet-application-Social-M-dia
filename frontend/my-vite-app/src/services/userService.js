@@ -23,7 +23,6 @@ userService.register = function(data) {
 };
 
 // Fonction pour se connecter
-// Fonction pour se connecter
 userService.login = async function(data) {
     try {
         const response = await axios.post('http://localhost:3000/api/auth/login', data);
@@ -32,12 +31,12 @@ userService.login = async function(data) {
         console.log("Réponse de l'API :", response.data); // Vérifiez ici
 
         // Mettez à jour la récupération de userId
-        const { token, user } = response.data; // Changez ici
+        const { token, user } = response.data; 
         const userId = user.id; // Extraire l'ID utilisateur de l'objet user
 
         // Stocker le token et l'ID utilisateur dans le localStorage
         localStorage.setItem('token', token);
-        localStorage.setItem('userId', userId); // Stockez l'ID utilisateur ici
+        localStorage.setItem('userId', userId); 
 
         return response;
     } catch (error) {
@@ -56,10 +55,10 @@ userService.logout = async function() {
             throw new Error('Logout failed');
         }
 
-        return response.data.message; // Return the success message
+        return response.data.message; 
     } catch (error) {
         console.error('Error during logout:', error);
-        throw error; // Rethrow the error to handle it in the component
+        throw error;
     }
 };
   

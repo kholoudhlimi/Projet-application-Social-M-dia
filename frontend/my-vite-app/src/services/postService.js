@@ -2,10 +2,10 @@ import axios from 'axios';
 
 const postService = {};
 
-// Function to retrieve the token from localStorage
+
 const getToken = () => localStorage.getItem('token');
 
-// Function to create a post
+
 postService.createPost = async function(data) {
     const token = getToken();
     if (!token) {
@@ -24,7 +24,7 @@ postService.createPost = async function(data) {
     }
 };
 
-// Function to retrieve all posts
+
 postService.getPosts = async function() {
     const token = getToken();
     if (!token) {
@@ -47,7 +47,7 @@ postService.getPosts = async function() {
     }
 };
 
-// Function to retrieve a post by ID
+
 postService.getPostById = async function(id) {
     const token = getToken();
     if (!token) {
@@ -66,7 +66,7 @@ postService.getPostById = async function(id) {
     }
 };
 
-// Function to update a post
+
 postService.updatePost = async function(id, data) {
     const token = getToken();
     if (!token) {
@@ -90,7 +90,7 @@ postService.updatePost = async function(id, data) {
     }
 };
 
-// Function to delete a post
+
 postService.deletePost = async function(id) {
     const token = getToken();
     if (!token) {

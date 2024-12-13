@@ -9,14 +9,14 @@
   } 
   
   .request_title h4 {
-    color: blue;
+    color: rgb(18, 184, 132);
   }
   
   
   h4.request_number {
     height: 25px;
     width: 25px;
-    background-color: blue;
+    background-color:rgb(18, 184, 132);
     color: white;
     border-radius: 50%;
     display: flex;

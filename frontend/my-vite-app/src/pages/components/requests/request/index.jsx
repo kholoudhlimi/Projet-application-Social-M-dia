@@ -9,7 +9,7 @@ return (
 <div className="requeste" >
     <div className="requeste_details">
         <img className="user_image" src={data.profile_image}/>
-       <p> <b>{data.name}</b> want to add you </p>
+       <p> <b>{data.name}</b>  veut t'ajouter </p>
 
 
     </div>

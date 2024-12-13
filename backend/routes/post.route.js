@@ -8,10 +8,10 @@ const permissions = require('../middleware/permissions-post')
 // Créer un nouveau post (avec upload d'image)
 router.post('/post', auth, multer, postController.createPost);
 
-// Récupérer tous les posts (accessible à l'admin)
+
 router.get('/post', auth, postController.getAllPosts);
 
-// Récupérer un post par ID (accessible à l'admin)
+
 router.get('/post/:id', auth, postController.getPostById);
 
 // Mettre à jour un post (avec upload d'image)

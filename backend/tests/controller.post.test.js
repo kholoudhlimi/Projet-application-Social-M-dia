@@ -31,7 +31,7 @@ describe('Post Controller', () => {
       description: 'Nouveau post',
       imageUrl: null,
       userId: '6711744963960e1afcdf7b9',
-      coments: [], // Corrections ici
+      coments: [], 
     };
     // Simuler le comportement de Post.prototype.save
     Post.prototype.save = jest.fn().mockResolvedValue(mockPost);
@@ -70,7 +70,7 @@ describe('Post Controller', () => {
   
     const response = await request(app).get('/api/posts/post');
     
-    console.log('Response Body:', response.body); // Pour voir ce qui est retourné
+    
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockPosts);
     expect(Post.find).toHaveBeenCalledTimes(1);
@@ -82,7 +82,7 @@ describe('Post Controller', () => {
       description: 'Post 1',
       imageUrl: null,
       userId: '6711744963960e1afcdf7b9',
-      coments: [], // Corrections ici
+      coments: [], 
     };
 
     Post.findById.mockResolvedValueOnce(mockPost);
@@ -100,7 +100,7 @@ describe('Post Controller', () => {
       _id: '615f7f0f1c9d440000bda9cf',
       description: 'Post initial',
       userId: '6711744963960e1afcdf7b9',
-      coments: [] // Corrections ici
+      coments: [] 
     };
   
     // Simuler la méthode save après la déclaration

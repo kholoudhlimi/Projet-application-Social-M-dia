@@ -21,7 +21,7 @@ commentService.createComent = async function(data) {
     }
 };
 
-// Method to get comments by post ID
+
 commentService.getComentsByPostId = async function(postId) {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -40,7 +40,7 @@ commentService.getComentsByPostId = async function(postId) {
     }
 };
 
-// Method to get all comments
+
 commentService.getAllComents = async function() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -59,7 +59,7 @@ commentService.getAllComents = async function() {
     }
 };
 
-// Method to update a comment by ID
+
 commentService.updateComent = async function(id, data) {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -78,7 +78,7 @@ commentService.updateComent = async function(id, data) {
     }
 };
 
-// Method to delete a comment by ID
+
 commentService.deleteComent = async function(id) {
     const token = localStorage.getItem('token');
     if (!token) {

@@ -67,10 +67,11 @@ const Register = () => {
     return (
         <div className="register">
             <Toaster />
+            <div className="register-cover"></div>
             <div className="register-content">
                 <div>
                     <h1>Social Working CLUB</h1>
-                    <p>Social media application</p>
+                   
                 </div>
                 <div>
                     <form onSubmit={register}>
@@ -101,7 +102,7 @@ const Register = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Password</label>
+                            <label>Mot de passe</label>
                             <input
                                 className="input"
                                 type="password"
@@ -114,7 +115,7 @@ const Register = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Picture</label>
+                            <label>Photo de profile</label>
                             <input
                                 className="input"
                                 type="file"
@@ -122,7 +123,7 @@ const Register = () => {
                             />
                         </div>
 
-                        <button className="btn signup" type="submit">Sign up</button>
+                        <button className="btn signup" type="submit">S'nscrire</button>
                     </form>
                 </div>
             </div>

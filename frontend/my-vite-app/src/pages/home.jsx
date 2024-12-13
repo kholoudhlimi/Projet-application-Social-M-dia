@@ -12,15 +12,14 @@ const Home = () => {
 const navigate = useNavigate()
     const getConnectedUserData = () => {
         setConnectUser(JSON.parse(localStorage.getItem("user_data")));
-        if(localStorage.getItem("user_data")== null){ //user not connected
-            // rederection vers page login 
+        if(localStorage.getItem("user_data")== null){ 
 navigate("login");
 
         }
     };
 
     useEffect(() => {
-        getConnectedUserData(); // Appeler la fonction
+        getConnectedUserData(); 
     }, []);
 
     return (
@@ -45,7 +44,7 @@ navigate("login");
 </div>
 
 
-            {/* <h1>hello {connectedUser.pseudo}</h1> */}
+           
         </>
     );
 };

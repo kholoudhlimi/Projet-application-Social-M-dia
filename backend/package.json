@@ -4,8 +4,9 @@
   "description": "Projet ",
   "main": "server.js",
   "scripts": {
-    "test": "jest --watchAll",
+    "test": " jest --watchAll",
     "start": "nodemon server.js"
+    
   },
   "author": "kholoud hlimi",
   "license": "ISC",

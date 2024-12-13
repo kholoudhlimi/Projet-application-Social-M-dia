@@ -75,9 +75,8 @@ const Login = () => {
             <div className="login-cover"></div>
 
             <div className="login-content">
-                <h1>CHAT SPACE</h1>
-                <p>Application de médias sociaux</p>
-
+                <h1>Social Working CLUB</h1>
+                
                 <form onSubmit={login}>
                     <div className="form-group">
                         <label>Email</label>

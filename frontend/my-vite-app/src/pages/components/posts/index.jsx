@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './style.css';
-import Post from "./post"; // Assurez-vous que le chemin est correct
-import NewPost from "./newPost"; // Assurez-vous que le chemin est correct
+import Post from "./post"; 
+import NewPost from "./newPost"; 
 import postService from './../../../services/postService';
 import { toast } from 'react-toastify';
 

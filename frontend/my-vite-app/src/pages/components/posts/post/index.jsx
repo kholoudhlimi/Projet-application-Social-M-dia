@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import './style.css'; 
 import postService from '../../../../services/postService';
-import Comments from '../../comments'; // Assurez-vous que le chemin est correct
+import Comments from '../../comments'; 
 
 const Post = ({ post, onPostUpdated, onPostDeleted }) => {
     const currentUser = JSON.parse(localStorage.getItem('user_data'));

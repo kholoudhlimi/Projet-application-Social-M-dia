@@ -80,10 +80,11 @@ const Admin = () => {
     return (
         <div className="register">
             <Toaster />
+            <div className="register-cover"></div>
             <div className="register-content">
                 <div>
-                    <h1>CHAT SPACE</h1>
-                    <p>Social media application</p>
+                    <h1>Social Working CLUB</h1>
+                   
                 </div>
                 <div>
                     <form onSubmit={isAdmin}>
@@ -114,7 +115,7 @@ const Admin = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Password</label>
+                            <label>mot de passe</label>
                             <input
                                 className="input"
                                 type="password"
@@ -127,7 +128,7 @@ const Admin = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Picture</label>
+                            <label>Photo de profile </label>
                             <input
                                 className="input"
                                 type="file"

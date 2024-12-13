@@ -36,7 +36,6 @@ exports.getAllPosts = async (req, res) => {
       .populate('userId', 'username picture')
       .populate('coments') // Vérifiez si le champ "coments" est bien écrit dans le modèle
       .exec();
-    console.log("Posts récupérés :", posts); // Pour déboguer
     res.status(200).json(posts);
   } catch (error) {
     console.error('Erreur lors de la récupération des posts:', error); // Pour aider à identifier des problèmes

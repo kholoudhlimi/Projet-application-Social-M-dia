@@ -1,9 +1,8 @@
 const Post = require('../models/post.model');  // Importation du modèle Post
 const Coment = require('../models/coment.model');  // Importation du modèle Comment
 
-//// Fonction pour créer un commentaire
+// Fonction pour créer un commentaire
 exports.createComent = async (req, res) => {
-  console.log('Requête reçue:', req.body);
   const userId = req.auth.userId;
 
   if (!userId) {
@@ -12,11 +11,10 @@ exports.createComent = async (req, res) => {
 
   try {
     const { postId, coment } = req.body;
-    console.log('Post ID:', postId);
-    
+
     const post = await Post.findById(postId);
     if (!post) {
-      console.log('Post non trouvé');
+
       return res.status(404).json({ message: 'Post non trouvé' });
     }
 
@@ -38,7 +36,7 @@ exports.createComent = async (req, res) => {
 exports.getAllComents = async (req, res) => {
   try {
     const coments = await Coment.find().populate('userId', 'username picture')
-    .exec();
+      .exec();
     res.status(200).json(coments);
   } catch (error) {
     res.status(500).json({ message: 'Erreur lors de la récupération des commentaires', error: error.message });

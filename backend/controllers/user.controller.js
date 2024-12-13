@@ -89,8 +89,7 @@ exports.createAdmin = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  // Dans une implémentation réelle, tu pourrais invalider le token ici
-  // Exemple : ajouter le token à une liste noire en mémoire ou dans la base de données
+  
 
   res.status(200).json({ message: 'Déconnexion réussie !' });
 };

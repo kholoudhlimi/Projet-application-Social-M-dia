@@ -78,7 +78,7 @@ const NewPost = () => {
           <textarea 
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Qu'est-ce qui vous préoccupe ?"
+            placeholder="partagez un post avec tes collégue "
           />
         </div>
       </div>

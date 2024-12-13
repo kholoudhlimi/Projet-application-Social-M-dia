@@ -15,8 +15,8 @@ module.exports = async (req, res, next) => {
 
     // Vérification des permissions
     if (userRole === 'admin' || post.userId.toString() === userId.toString()) {
-      // L'utilisateur est administrateur ou propriétaire du post
-      next(); // Passer au middleware suivant ou à la route
+     
+      next(); 
     } else {
       return res.status(403).json({ message: "Accès refusé : vous n'avez pas la permission de modifier ou supprimer ce post" });
     }
